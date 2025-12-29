@@ -1,4 +1,4 @@
-name = "auth0-cte-backend"
+name = "auth0-cte-demo"
 main = "workers/index.js"
 compatibility_date = "2024-01-01"
 
