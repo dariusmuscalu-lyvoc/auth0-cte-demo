@@ -1,39 +1,57 @@
-import React from "react";
 
-const ORGANIZATION_ID = "org_NuioIiSZARzIcDR9";
-const CLIENT_ID = "Yf2tITbm5pGvZGRrzWnMq9xBZtZriuaF"; // Main app client ID
-const DOMAIN = "demo-lyvoc.eu.auth0.com";
+import React from "react";
+import { useAuth0 } from "@auth0/auth0-react";
+
 
 const OrganizationPage: React.FC = () => {
+  const { loginWithRedirect } = useAuth0();
+
   const handleOrgLogin = () => {
-    const redirectUri = encodeURIComponent(window.location.origin + "/token");
-    const url = `https://${DOMAIN}/authorize?response_type=code&client_id=${CLIENT_ID}&redirect_uri=${redirectUri}&scope=openid%20profile%20email&organization=${ORGANIZATION_ID}`;
-    window.location.href = url;
+    loginWithRedirect({
+      authorizationParams: {
+        organization: "org_NuioIiSZARzIcDR9",
+        redirect_uri: window.location.origin + "/token",
+        scope: "openid profile email"
+      }
+    });
   };
 
   return (
-    <div style={{ padding: 24, textAlign: "center" }}>
-      <h2>Organization Login</h2>
-      <p>
-        Click the button below to log in as a member of your organization using Auth0 Organizations.
-      </p>
-      <button
-        onClick={handleOrgLogin}
-        style={{
-          marginTop: 32,
-          background: "#3182ce",
-          color: "#fff",
-          border: "none",
-          borderRadius: 8,
-          padding: "0.9rem 1.2rem",
-          fontWeight: 600,
-          fontSize: 16,
-          cursor: "pointer",
-        }}
-      >
-        Login with Organization
-      </button>
-    </div>
+    <div style={{ padding: 24 }}>
+    <h2>Auth0 Organizations</h2>
+    <p>
+      <b>Organizations</b> in Auth0 allow you to model business customers, partners, or teams as first-class entities. Each organization can have its own set of users, connections, roles, and branding. This is especially useful for B2B SaaS applications where you need to manage access and authentication for multiple customer organizations.
+    </p>
+    <p>
+      <b>Key Concepts:</b>
+      <ul>
+        <li>Each user can belong to one or more organizations.</li>
+        <li>Organizations can have their own login experience and branding.</li>
+        <li>Access can be managed at the organization level, including roles and permissions.</li>
+        <li>Login flows can be customized per organization using the <code>org_id</code> parameter.</li>
+      </ul>
+    </p>
+    <p>
+      <b>Try Organization Login:</b>
+    </p>
+    <button
+      onClick={handleOrgLogin}
+      style={{
+        marginTop: 24,
+        background: "#805ad5",
+        color: "#fff",
+        border: "none",
+        borderRadius: 8,
+        padding: "0.9rem 1.2rem",
+        fontWeight: 600,
+        fontSize: 16,
+        cursor: "pointer",
+        textAlign: "left",
+      }}
+    >
+      Login with Organization (org_NuioIiSZARzIcDR9)
+    </button>
+  </div>
   );
 };
 

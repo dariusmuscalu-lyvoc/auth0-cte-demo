@@ -10,6 +10,7 @@ import LogStreamsPage from "./LogStreamsPage";
 import SAMLIdpInitiatedPage from "./SAMLIdpInitiatedPage";
 import ActionsPage from "./ActionsPage";
 import FormsPage from "./FormsPage";
+import OrganizationPage from "./OrganizationPage";
 // import OrganizationPage from "./OrganizationPage";
 
 const App = () => {
@@ -40,6 +41,7 @@ const App = () => {
           {/* <Route path="/organization" element={<OrganizationPage />} /> */}
           <Route path="/actions" element={<ActionsPage />} />
           <Route path="/forms" element={<FormsPage />} />
+          <Route path="/organization" element={<OrganizationPage />} />
         </Routes>
       </main>
     </div>

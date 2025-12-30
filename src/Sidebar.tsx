@@ -112,6 +112,7 @@ const Sidebar = () => {
         Log Streams
       </NavLink>
 
+
       <NavLink to="/forms" style={({ isActive }) => ({
         color: isActive ? "#63b3ed" : "#e2e8f0",
         textDecoration: "none",
@@ -120,6 +121,16 @@ const Sidebar = () => {
         marginBottom: 16,
       })}>
         Forms
+      </NavLink>
+
+      <NavLink to="/organization" style={({ isActive }) => ({
+        color: isActive ? "#63b3ed" : "#e2e8f0",
+        textDecoration: "none",
+        fontWeight: 600,
+        fontSize: 17,
+        marginBottom: 16,
+      })}>
+        Organization
       </NavLink>
 
       <button
