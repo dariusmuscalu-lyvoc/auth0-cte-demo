@@ -205,6 +205,25 @@ const Sidebar = () => {
       >
         Okta Workforce OIDC
       </button>
+
+      {/* Universal Login Button */}
+      <button
+        onClick={() => loginWithRedirect()}
+        style={{
+          marginTop: 16,
+          background: "#5830c5ff",
+          color: "#fff",
+          border: "none",
+          borderRadius: 8,
+          padding: "0.9rem 1.2rem",
+          fontWeight: 600,
+          fontSize: 16,
+          cursor: "pointer",
+          textAlign: "left",
+        }}
+      >
+        Universal Login
+      </button>
       <button
         onClick={() => {
           if (window.confirm("Are you sure you want to log out?")) {
