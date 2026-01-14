@@ -50,9 +50,20 @@ AUTH0_CLIENT_SECRET=your-client-secret-here
 4. Test SSO, Adaptive MFA, Organizations, etc. via sidebar navigation
 5. View Auth0 tokens and decoded payloads
 
-### 6. Useful Links
-- [AUTH0_SETUP_GUIDE.md](./AUTH0_SETUP_GUIDE.md) – Full Auth0 setup
-- [README.md](./README.md) – Project overview and usage
+
+### 6. Documentation Overview
+
+Below is a summary of each documentation file included in this project and its purpose:
+
+- **AUTH0_SETUP_GUIDE.md** – Step-by-step guide for configuring Auth0, including enabling Custom Token Exchange and setting up your Auth0 tenant and applications.
+- **CLOUDFLARE_DEPLOYMENT.md** – Instructions for deploying the demo app and backend to Cloudflare Pages and Workers, including environment setup and secrets management.
+- **CUSTOM_TOKEN_EXCHANGE_GUIDE.md** – Deep-dive technical guide on implementing Auth0's Custom Token Exchange (CTE) feature, including architecture, flows, and backend integration.
+- **IDP_INITIATED_SSO_README.md** – Explains how the app supports SAML/OIDC IdP-initiated SSO, the differences from SP-initiated SSO, and how tokens are handled in the React SPA.
+- **IMPLEMENTATION_SUMMARY.md** – High-level summary of what was built in the demo, including key files, features, and next steps for running or extending the project.
+- **QUICK_START.md** – Fast setup guide for getting the demo running, with concise configuration and launch steps for new users.
+- **SAML_IDP_INITIATED_FLOW.md** – Details the SAML IdP-initiated login flow, how to trigger it in this demo, and what to expect during the process.
+
+For more details, see each file in the `docs/` folder.
 
 ---
 
