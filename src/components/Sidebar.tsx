@@ -1,10 +1,11 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useTheme } from "../context/ThemeContext";
+import { OrganizationBadge } from "./OrganizationPicker";
 
 const Sidebar = () => {
-  const { loginWithRedirect, logout } = useAuth0();
-  const { theme } = useTheme();
+  const { loginWithRedirect, logout, isAuthenticated } = useAuth0();
+  const { theme, currentOrgBranding } = useTheme();
 
 
   const handlePasswordless = () => {
@@ -59,16 +60,30 @@ const Sidebar = () => {
       }}
     >
       <div style={{ marginBottom: "2rem", textAlign: "center" }}>
-        {theme.logoUrl && (
-          <img
-            src={theme.logoUrl}
-            alt="Logo"
-            style={{ maxWidth: 140, maxHeight: 60, marginBottom: 12, objectFit: "contain" }}
-          />
-        )}
+        <img
+          src={theme.logoUrl && theme.logoUrl.trim() ? theme.logoUrl : "https://www.fluidra.com/wp-content/uploads/2024/07/Logo.webp"}
+          alt="Logo"
+          style={{ maxWidth: 140, maxHeight: 60, marginBottom: 12, objectFit: "contain" }}
+        />
         <div style={{ color: "var(--text-primary)", fontWeight: 700, fontSize: 18 }}>
-          Auth0 {theme.customerName ? `${theme.customerName} ` : ""}CIC Demo
+          {theme.customerName && theme.customerName.trim() ? theme.customerName : "Fluidra"} CIC Demo
         </div>
+        
+        {/* Organization Badge */}
+        {currentOrgBranding && isAuthenticated && (
+          <div style={{ marginTop: "1rem" }}>
+            <OrganizationBadge
+              orgName={currentOrgBranding.brandId + "-" + currentOrgBranding.country}
+              displayName={currentOrgBranding.displayName}
+              logoUrl={currentOrgBranding.logoUrl}
+              primaryColor={currentOrgBranding.theme.primaryColor}
+              onSwitch={() => {
+                // Navigate to organization page to switch
+                window.location.href = "/organization";
+              }}
+            />
+          </div>
+        )}
       </div>
       <NavLink to="/" end style={({ isActive }) => ({
         color: isActive ? "var(--primary-color)" : "var(--text-secondary)",

@@ -1,9 +1,10 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
+import { OrganizationBranding, getOrganizationBranding } from "../config/organizationBranding";
 
 // Default theme values (matches :root in index.css)
 const DEFAULT_THEME = {
-  customerName: "",
-  logoUrl: "",
+  customerName: "Fluidra",
+  logoUrl: "https://www.fluidra.com/wp-content/uploads/2024/07/Logo.webp",
   primaryColor: "#63b3ed",
   secondaryColor: "#ed8936",
   bgPrimary: "#1a1e27",
@@ -21,14 +22,18 @@ interface ThemeContextType {
   updateTheme: (updates: Partial<ThemeConfig>) => void;
   resetTheme: () => void;
   isCustomized: boolean;
+  // Organization theming
+  currentOrgBranding: OrganizationBranding | null;
+  applyOrganizationTheme: (orgIdentifier: string) => void;
+  clearOrganizationTheme: () => void;
 }
 
 const STORAGE_KEY = "auth0-cic-demo-theme";
 
 // Get env var values as fallback
 const getEnvTheme = (): Partial<ThemeConfig> => ({
-  customerName: import.meta.env.VITE_CUSTOMER_NAME || "",
-  logoUrl: import.meta.env.VITE_LOGO_URL || "",
+  customerName: import.meta.env.VITE_CUSTOMER_NAME || "Fluidra",
+  logoUrl: import.meta.env.VITE_LOGO_URL || "https://www.fluidra.com/wp-content/uploads/2024/07/Logo.webp",
   primaryColor: import.meta.env.VITE_PRIMARY_COLOR || "",
   secondaryColor: import.meta.env.VITE_SECONDARY_COLOR || "",
   bgPrimary: import.meta.env.VITE_BG_PRIMARY || "",
@@ -53,12 +58,12 @@ const loadTheme = (): ThemeConfig => {
     console.warn("Failed to load theme from localStorage:", e);
   }
 
-  // Merge: stored values > env values > defaults
+  // Merge: stored values > env values > defaults (only if value is non-empty)
   const merged: ThemeConfig = { ...DEFAULT_THEME };
   for (const key of Object.keys(DEFAULT_THEME) as (keyof ThemeConfig)[]) {
-    if (storedTheme[key]) {
+    if (storedTheme[key] && storedTheme[key] !== "") {
       merged[key] = storedTheme[key]!;
-    } else if (envTheme[key]) {
+    } else if (envTheme[key] && envTheme[key] !== "") {
       merged[key] = envTheme[key]!;
     }
   }
@@ -78,21 +83,32 @@ const applyTheme = (theme: ThemeConfig) => {
   root.style.setProperty("--text-secondary", theme.textSecondary);
   root.style.setProperty("--text-muted", theme.textMuted);
   
-  // Update document title
-  document.title = theme.customerName 
-    ? `Auth0 ${theme.customerName} CIC Demo` 
-    : "Auth0 CIC Demo";
+  // Update document title (always fallback to Fluidra)
+  const customerName = theme.customerName && theme.customerName.trim() ? theme.customerName : "Fluidra";
+  document.title = `${customerName} CIC Demo`;
 };
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
+const ORG_THEME_STORAGE_KEY = "auth0-cic-demo-org-theme";
+
 export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [theme, setTheme] = useState<ThemeConfig>(loadTheme);
   const [isCustomized, setIsCustomized] = useState(false);
+  const [currentOrgBranding, setCurrentOrgBranding] = useState<OrganizationBranding | null>(null);
 
   // Check if theme has been customized (stored in localStorage)
   useEffect(() => {
     setIsCustomized(localStorage.getItem(STORAGE_KEY) !== null);
+    
+    // Check for stored org theme on mount
+    const storedOrgId = localStorage.getItem(ORG_THEME_STORAGE_KEY);
+    if (storedOrgId) {
+      const branding = getOrganizationBranding(storedOrgId);
+      if (branding) {
+        setCurrentOrgBranding(branding);
+      }
+    }
   }, []);
 
   // Apply theme on mount and when it changes
@@ -120,8 +136,50 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     setIsCustomized(false);
   };
 
+  /**
+   * Apply organization-specific theming
+   */
+  const applyOrganizationTheme = useCallback((orgIdentifier: string) => {
+    const branding = getOrganizationBranding(orgIdentifier);
+    if (!branding) {
+      console.warn(`No branding found for organization: ${orgIdentifier}`);
+      return;
+    }
+
+    setCurrentOrgBranding(branding);
+    localStorage.setItem(ORG_THEME_STORAGE_KEY, orgIdentifier);
+
+    // Apply organization theme
+    const orgTheme: Partial<ThemeConfig> = {
+      customerName: branding.displayName,
+      logoUrl: branding.logoUrl,
+      ...branding.theme,
+    };
+
+    setTheme((prev) => ({ ...prev, ...orgTheme }));
+  }, []);
+
+  /**
+   * Clear organization theme and revert to default/custom theme
+   */
+  const clearOrganizationTheme = useCallback(() => {
+    setCurrentOrgBranding(null);
+    localStorage.removeItem(ORG_THEME_STORAGE_KEY);
+    
+    // Reload base theme
+    setTheme(loadTheme());
+  }, []);
+
   return (
-    <ThemeContext.Provider value={{ theme, updateTheme, resetTheme, isCustomized }}>
+    <ThemeContext.Provider value={{ 
+      theme, 
+      updateTheme, 
+      resetTheme, 
+      isCustomized,
+      currentOrgBranding,
+      applyOrganizationTheme,
+      clearOrganizationTheme,
+    }}>
       {children}
     </ThemeContext.Provider>
   );
